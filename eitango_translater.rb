@@ -38,7 +38,7 @@ def create_word_record(formated_word)
     en_meaning = Nokogiri::HTML.parse(cambridge_html).at_css(".def.ddef_d.db")&.text&.strip
     if jp_meaning or en_meaning then
       puts "Congratulations! You found a new word!"
-      Word.create(word: formated_word, weblio_html: weblio_html, cambridge_html: cambridge_html, meaning_j: jp_meaning&.gsub(/\s/, " "), meaning_e: en_meaning&.gsub(/\s/, " "), weblio_status: 1, cambridge_status: 1)
+      Word.create(word: formated_word, weblio_html: weblio_html, cambridge_html: cambridge_html, meaning_j: jp_meaning&.gsub(/\s+/, " "), meaning_e: en_meaning&.gsub(/\s+/, " "), weblio_status: 1, cambridge_status: 1)
     end
   rescue => e
     puts e.message
@@ -90,15 +90,23 @@ loop do
     puts "You selected japanese to english mode!"
     loop do
       printf "[je]> "
-      jp_phrase = gets.gsub(/\s/, " ").strip
+      jp_phrase = gets.gsub(/\s+/, " ").strip
       break if jp_phrase == "chmod"
       next if jp_phrase == ""
       begin
         sleep 1
-        ej_html = URI.open("https://ejje.weblio.jp/content/#{URI.encode_www_form_component(jp_phrase)}")
-        ej_doc = Nokogiri::HTML.parse(ej_html)
-        matched_words = ej_doc.at_css(".content-explanation.je")
-        puts matched_words ? matched_words.text.strip : "Can't find words meaning `#{jp_phrase}`"
+        je_html = URI.open("https://ejje.weblio.jp/content/#{URI.encode_www_form_component(jp_phrase)}")
+        je_doc = Nokogiri::HTML.parse(je_html)
+        matched_words = je_doc.at_css(".content-explanation.je")
+        if matched_words.empty?
+          puts "Can't find words meaning `#{jp_phrase}`"
+        else
+          matched_words.split(";").each do |raw_word|
+            create_word_record(raw_word.gsub(/\s+/, ""))
+          end
+        end
+        puts matched_words ? matched_words.text.strip : 
+
       rescue => e
         puts e.message
       end
@@ -107,7 +115,7 @@ loop do
     puts "You selected japanese to english mode, but with full text search!"
     loop do
       printf "\n[ft]> "
-      jp_phrase = gets.gsub(/\s/, " ").strip
+      jp_phrase = gets.gsub(/\s+/, " ").strip
       break if jp_phrase == "chmod"
       next if jp_phrase == ""
       matched_words = Word.where("Match(meaning_j) Against('#{Word.sanitize_sql_like(jp_phrase)}')")
