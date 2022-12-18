@@ -46,6 +46,7 @@ def create_word_record(formated_word)
   end
 end
 
+# DB参照して，なければWeblioやCambridgeにアクセスして検索，意味が存在すれば，DBに保存
 def meaning_select_or_create(raw_word, mode)
   formated_word = raw_word.gsub(/\s+/, " ").strip
   word_record = Word.select(:meaning_j, :meaning_e).find_by(word: formated_word)
@@ -97,16 +98,13 @@ loop do
         sleep 1
         je_html = URI.open("https://ejje.weblio.jp/content/#{URI.encode_www_form_component(jp_phrase)}")
         je_doc = Nokogiri::HTML.parse(je_html)
-        matched_words = je_doc.at_css(".content-explanation.je")
-        if matched_words.empty?
+        matched_words = je_doc.at_css(".content-explanation.je")&.text&.strip
+        if matched_words.nil? then
           puts "Can't find words meaning `#{jp_phrase}`"
         else
-          matched_words.split(";").each do |raw_word|
-            meaning_select_or_create(raw_word.gsub(/\s+/, ""))
-          end
+          matched_words.split(";").each {|raw_word|meaning_select_or_create(raw_word, "ee")}
+          puts matched_words
         end
-        puts matched_words ? matched_words.text.strip : 
-
       rescue => e
         puts e.message
       end
