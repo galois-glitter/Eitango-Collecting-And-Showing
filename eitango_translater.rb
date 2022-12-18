@@ -32,8 +32,8 @@ def create_word_record(formated_word)
   encoded_word = URI.encode_www_form_component(word_for_search)
   begin
     sleep 1
-    weblio_html = URI.open("#{weblio_root}#{word_for_search}")
-    cambridge_html = URI.open("#{cambridge_root}#{word_for_search}")
+    weblio_html = URI.open("#{weblio_root}#{encoded_word}")
+    cambridge_html = URI.open("#{cambridge_root}#{encoded_word}")
     jp_meaning = Nokogiri::HTML.parse(weblio_html).at_css(".content-explanation.ej")&.text&.strip
     en_meaning = Nokogiri::HTML.parse(cambridge_html).at_css(".def.ddef_d.db")&.text&.strip
     if jp_meaning or en_meaning then
