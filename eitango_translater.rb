@@ -102,7 +102,7 @@ loop do
           puts "Can't find words meaning `#{jp_phrase}`"
         else
           matched_words.split(";").each do |raw_word|
-            create_word_record(raw_word.gsub(/\s+/, ""))
+            meaning_select_or_create(raw_word.gsub(/\s+/, ""))
           end
         end
         puts matched_words ? matched_words.text.strip : 
