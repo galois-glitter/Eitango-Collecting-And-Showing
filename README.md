@@ -25,13 +25,13 @@ $ ruby eitango_translater.rb
 
 ## モード
 
-### 日本語 &rarr 英語 (フルテキストなし) &rArr je
+### 日本語 &rarr; 英語 (フルテキストなし) &rArr; je
 日本語を入力したら，weblio検索による英単語検索結果を出力します．
 
-### 日本語 &rarr 英語（フルテキスト）&rArr ft
+### 日本語 &rarr; 英語（フルテキスト）&rArr; ft
 日本語を入力したら，保存しているレコードの中から，フルテキスト検索を行って，該当する単語を出力します．
 
-### 英語 &rarr 日本語 &rArr ej
+### 英語 &rarr; 日本語 &rArr; ej
 英単語の日本語の意味を以下のように出力します．
 
 1. DBに保存されているか調べる
@@ -39,7 +39,7 @@ $ ruby eitango_translater.rb
 3. 得られた結果をDBに保存する
 4. 結果を表示
 
-### 英語 &rarr 英語 &rArr ee
+### 英語 &rarr; 英語 &rArr; ee
 英単語の英語による意味を以下のように出力します．
 
 1. DBに保存されているか調べる
@@ -84,5 +84,5 @@ $ ruby eitango_translater.rb
 僕の知り合いで，英単語帳DBを受け取っている方は，以下のようにdumpファイルから，DBにデータを保存してください．巨大ファイルなので，`cat`されないようご注意ください．
 
 ```
-  mysql -u root weblio_dictionary < 
+  zcat weblio_dump.sql.gz mysql -u root weblio_dictionary 
 ```
