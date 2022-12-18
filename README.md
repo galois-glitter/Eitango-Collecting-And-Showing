@@ -84,5 +84,5 @@ $ ruby eitango_translater.rb
 僕の知り合いで，英単語帳DBを受け取っている方は，以下のようにdumpファイルから，DBにデータを保存してください．巨大ファイルなので，`cat`されないようご注意ください．
 
 ```
-  zcat weblio_dump.sql.gz mysql -u root weblio_dictionary 
+  zcat weblio_dump.sql.gz > mysql -u root weblio_dictionary 
 ```
